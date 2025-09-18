@@ -1,4 +1,6 @@
 import {
+  Box,
+  Button,
   Card,
   CardContent,
   Typography,
@@ -10,14 +12,22 @@ import {
   Radio,
 } from "@mui/material";
 import type { QuizQuestion } from "../types/quiz";
+import { useState } from "react";
+import { AnswerFeedback } from "./AnswerFeedback.tsx";
 
 interface QuestionCardProps {
   question: QuizQuestion;
   onAnswerChange: (selectedAnswers: number[]) => void;
+  isPracticeMode?: boolean;
 }
 
-export function QuestionCard({ question, onAnswerChange }: QuestionCardProps) {
-  // Check if only one answer is correct
+export function QuestionCard({
+  question,
+  onAnswerChange,
+  isPracticeMode = false,
+}: QuestionCardProps) {
+  const [showAnswers, setShowAnswers] = useState(false);
+
   const correctAnswersCount = question.options.filter(
     (option) => option.isCorrect,
   ).length;
@@ -25,10 +35,8 @@ export function QuestionCard({ question, onAnswerChange }: QuestionCardProps) {
 
   const handleOptionChange = (optionIndex: number, checked: boolean) => {
     if (isSingleAnswer) {
-      // For single answer, replace the selection
       onAnswerChange(checked ? [optionIndex] : []);
     } else {
-      // For multiple answers, add/remove from selection
       const currentSelected = question.selectedAnswers;
       let newSelected: number[];
       if (checked) {
@@ -40,8 +48,12 @@ export function QuestionCard({ question, onAnswerChange }: QuestionCardProps) {
     }
   };
 
+  const handleCheckAnswers = () => {
+    setShowAnswers(true);
+  };
+
   return (
-    <Card sx={{ maxWidth: 800, margin: "20px auto" }}>
+    <Card sx={{ maxWidth: 800, margin: "4rem auto" }}>
       <CardContent>
         <Typography variant="h6" component="h2" gutterBottom>
           {question.question}
@@ -89,6 +101,26 @@ export function QuestionCard({ question, onAnswerChange }: QuestionCardProps) {
             </FormGroup>
           )}
         </FormControl>
+
+        {isPracticeMode && (
+          <Box sx={{ mt: 3, display: "flex", justifyContent: "center" }}>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={handleCheckAnswers}
+              disabled={question.selectedAnswers.length === 0}
+            >
+              Check Answer
+            </Button>
+          </Box>
+        )}
+
+        {showAnswers && (
+          <AnswerFeedback
+            question={question}
+            onClose={() => setShowAnswers(false)}
+          />
+        )}
       </CardContent>
     </Card>
   );

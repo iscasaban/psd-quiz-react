@@ -1,23 +1,44 @@
 import "./App.css";
 import { useEffect, useState } from "react";
-import type { QuizQuestion } from "./types/quiz.ts";
+import type { QuizMode, QuizQuestion } from "./types/quiz.ts";
 import { parseQuestionsFromMarkdown } from "./utils/parseMarkdown.ts";
 import answersContent from "./data/answers.md?raw";
 import { QuestionCard } from "./components/QuestionCard.tsx";
 import { ResultsModal } from "./components/ResultsModal.tsx";
-import { Button } from "@mui/material";
+import { ModeSelector } from "./components/ModeSelector.tsx";
+import {
+  AppBar,
+  Box,
+  Button,
+  Container,
+  Toolbar,
+  Typography,
+} from "@mui/material";
+import { useQuizState } from "./hooks/useQuizState.ts";
+import { RangeSelector } from "./components/RangeSelector.tsx";
 
 function App() {
-  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
+  const [allQuestions, setAllQuestions] = useState<QuizQuestion[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [quizStarted, setQuizStarted] = useState(false);
-  const [showResults, setShowResults] = useState(false);
+
+  const {
+    currentScreen,
+    quizMode,
+    currentQuestionIndex,
+    quizQuestions,
+    navigateToScreen,
+    setMode,
+    startQuiz,
+    nextQuestion,
+    previousQuestion,
+    updateQuestionAnswers,
+    resetQuiz,
+  } = useQuizState();
 
   useEffect(() => {
     try {
       const parsedQuestions = parseQuestionsFromMarkdown(answersContent);
-      setQuestions(parsedQuestions);
+      setAllQuestions(parsedQuestions);
     } catch (error) {
       console.error("Failed to parse questions:", error);
     } finally {
@@ -25,109 +46,107 @@ function App() {
     }
   }, []);
 
-  const currentQuestion = questions[currentQuestionIndex];
-  const isLastQuestion = currentQuestionIndex === questions.length - 1;
+  const handleModeSelect = (mode: QuizMode) => {
+    setMode(mode);
+    if (mode === "exam") {
+      handleExamStart();
+    } else {
+      navigateToScreen("range-selection");
+    }
+  };
 
-  const handleStart = () => {
-    const shuffledQuestions = [...questions].sort(() => Math.random() - 0.5);
+  const handleRangeSelect = (selectedQuestions: QuizQuestion[]) => {
+    startQuiz(selectedQuestions);
+  };
+
+  const handleExamStart = () => {
+    const shuffledQuestions = [...allQuestions].sort(() => Math.random() - 0.5);
     const selectedQuestions = shuffledQuestions.slice(0, 80);
 
-    const quizQuestions = selectedQuestions.map((question, index) => ({
+    const examQuestions = selectedQuestions.map((question, index) => ({
       ...question,
       id: index,
       selectedAnswers: [],
     }));
 
-    setQuestions(quizQuestions);
-    setQuizStarted(true);
-  };
-
-  const handleNext = () => {
-    if (isLastQuestion) {
-      setShowResults(true);
-    } else {
-      setCurrentQuestionIndex((prev) => prev + 1);
-    }
-  };
-
-  const handlePrevious = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex((prev) => prev - 1);
-    }
+    startQuiz(examQuestions);
   };
 
   const handleRestart = () => {
-    setShowResults(false);
-    setCurrentQuestionIndex(0);
-    // Reset all selected answers
-    setQuestions((prev) => prev.map((q) => ({ ...q, selectedAnswers: [] })));
-    setQuizStarted(false); // Return to start screen
+    resetQuiz();
   };
 
-  if (loading) return <div>Loading questions...</div>;
-  if (questions.length === 0) return <div>No questions found</div>;
-
-  if (!quizStarted) {
+  if (currentScreen === "range-selection") {
     return (
-      <>
-        <h1 color="primary">
-          Professional Scrum Developer™ Certification quiz
-        </h1>
-
-        <div className="card">
-          <p>Prepare your PSD I certification with this quiz</p>
-          <p>
-            {questions.length} questions available. 80 will be selected
-            randomly.
-          </p>
-        </div>
-        <Button variant="contained" color="primary" onClick={handleStart}>
-          Start
-        </Button>
-      </>
+      <RangeSelector
+        questions={allQuestions}
+        onSelectRange={handleRangeSelect}
+        onBack={() => navigateToScreen("mode-selection")}
+      />
     );
   }
 
+  if (loading) return <div>Loading questions...</div>;
+  if (allQuestions.length === 0) return <div>No questions found</div>;
+
+  if (currentScreen === "mode-selection") {
+    return (
+      <ModeSelector
+        totalQuestions={allQuestions.length}
+        onSelectMode={handleModeSelect}
+      />
+    );
+  }
+
+  const currentQuestion = quizQuestions[currentQuestionIndex];
+  const totalQuestions = quizMode === "exam" ? 80 : quizQuestions.length;
+
   return (
-    <div>
-      <h1 color="primary">Professional Scrum Developer™ Certification quiz</h1>
+    <>
+      <AppBar>
+        <Container maxWidth="xl">
+          <Toolbar disableGutters sx={{ marginInlineEnd: 4 }}>
+            <Typography variant="h6" color="secondary">
+              PSD I Quiz - {quizMode === "exam" ? "Exam" : "Practice"} Mode
+            </Typography>
+          </Toolbar>
+        </Container>
+      </AppBar>
 
-      {/* Progress indicator */}
-      <div>Question {currentQuestionIndex + 1} of 80</div>
+      <Box>
+        <Typography variant="subtitle1" sx={{ mt: 7 }}>
+          Question {currentQuestionIndex + 1} of {totalQuestions}
+        </Typography>
 
-      {/* Current question display */}
-      <QuestionCard
-        question={currentQuestion}
-        onAnswerChange={(selectedAnswers) => {
-          // Update the selected answers for current question
-          setQuestions((prev) =>
-            prev.map((q, index) =>
-              index === currentQuestionIndex ? { ...q, selectedAnswers } : q,
-            ),
-          );
-        }}
-      />
+        <QuestionCard
+          question={currentQuestion}
+          onAnswerChange={updateQuestionAnswers}
+          isPracticeMode={quizMode === "practice"}
+        />
 
-      {/* Navigation buttons */}
-      <Button
-        variant="outlined"
-        color="primary"
-        onClick={handlePrevious}
-        disabled={currentQuestionIndex === 0}
-      >
-        Previous
-      </Button>
-      <Button variant="contained" onClick={handleNext} disabled={false}>
-        {isLastQuestion ? "Finish Quiz" : "Next"}
-      </Button>
+        <Button
+          variant="outlined"
+          color="secondary"
+          onClick={previousQuestion}
+          disabled={currentQuestionIndex === 0}
+        >
+          Previous
+        </Button>
 
-      <ResultsModal
-        open={showResults}
-        questions={questions}
-        onClose={() => setShowResults(false)}
-        onRestart={handleRestart}
-      />
-    </div>
+        <Button variant="contained" onClick={nextQuestion}>
+          {currentQuestionIndex === quizQuestions.length - 1
+            ? "Finish Quiz"
+            : "Next"}
+        </Button>
+
+        <ResultsModal
+          open={currentScreen === "results"}
+          questions={quizQuestions}
+          onClose={() => navigateToScreen("quiz")}
+          onRestart={handleRestart}
+        />
+      </Box>
+    </>
   );
 }
 

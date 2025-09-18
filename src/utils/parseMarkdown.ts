@@ -11,7 +11,6 @@ export function parseQuestionsFromMarkdown(
     const lines = block.trim().split("\n");
     const questionText = lines[0].trim();
 
-    // Find all checkbox lines - be more specific with the regex
     const optionLines = lines
       .slice(1)
       .filter((line) => line.trim().match(/^- \[[x ]]/));

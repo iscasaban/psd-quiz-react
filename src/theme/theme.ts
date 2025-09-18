@@ -4,16 +4,20 @@ const themeOptions: ThemeOptions = {
   palette: {
     mode: "light",
     primary: {
-      main: "#FFA955",
+      main: "#1ed4a1",
+      dark: "#159470",
     },
     secondary: {
-      main: "#FFD63A",
+      main: "#11225D",
+    },
+    warning: {
+      main: "#ff9800",
     },
     error: {
-      main: "#F75A5A",
+      main: "#f44336",
     },
     success: {
-      main: "#6DE1D2",
+      main: "#4caf50",
     },
   },
   typography: {
