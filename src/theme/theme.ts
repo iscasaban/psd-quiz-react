@@ -1,6 +1,6 @@
-import { createTheme, type ThemeOptions } from "@mui/material/styles";
+import { createTheme } from "@mui/material/styles";
 
-const themeOptions: ThemeOptions = {
+export const theme = createTheme({
   palette: {
     mode: "light",
     primary: {
@@ -14,7 +14,7 @@ const themeOptions: ThemeOptions = {
       main: "#ff9800",
     },
     error: {
-      main: "#f44336",
+      main: "#e41404",
     },
     success: {
       main: "#4caf50",
@@ -46,6 +46,4 @@ const themeOptions: ThemeOptions = {
   shape: {
     borderRadius: 8,
   },
-};
-
-export const theme = createTheme(themeOptions);
+});
