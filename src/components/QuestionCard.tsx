@@ -10,10 +10,12 @@ import {
   Checkbox,
   RadioGroup,
   Radio,
+  Alert,
 } from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
 import type { QuizQuestion } from "../types/quiz";
-import { useState } from "react";
-import { AnswerFeedback } from "./AnswerFeedback.tsx";
+import { useState, useEffect } from "react";
 
 interface QuestionCardProps {
   question: QuizQuestion;
@@ -28,10 +30,55 @@ export function QuestionCard({
 }: QuestionCardProps) {
   const [showAnswers, setShowAnswers] = useState(false);
 
+  useEffect(() => {
+    setShowAnswers(false);
+  }, [question]);
+
   const correctAnswersCount = question.options.filter(
     (option) => option.isCorrect,
   ).length;
   const isSingleAnswer = correctAnswersCount === 1;
+
+  const correctIndices = question.options
+    .map((option, index) => (option.isCorrect ? index : -1))
+    .filter((index) => index !== -1);
+
+  const selectedIndices = question.selectedAnswers.sort();
+  const correctIndicesSorted = correctIndices.sort();
+
+  const isCorrect =
+    selectedIndices.length === correctIndicesSorted.length &&
+    selectedIndices.every((val, index) => val === correctIndicesSorted[index]);
+
+  const getOptionFeedback = (index: number) => {
+    if (!showAnswers)
+      return { icon: null, color: "inherit", fontWeight: "normal" };
+
+    const isSelectedByUser = question.selectedAnswers.includes(index);
+    const isCorrectOption = question.options[index].isCorrect;
+
+    if (isCorrectOption) {
+      return {
+        icon: (
+          <CheckCircleIcon
+            sx={{ color: "success.main", fontSize: "1.2rem", mx: 1 }}
+          />
+        ),
+        color: "success.main",
+        fontWeight: "bold",
+      };
+    } else if (isSelectedByUser && !isCorrectOption) {
+      return {
+        icon: (
+          <CancelIcon sx={{ color: "error.main", fontSize: "1.2rem", mx: 1 }} />
+        ),
+        color: "error.main",
+        fontWeight: "normal",
+      };
+    }
+
+    return { icon: null, color: "inherit", fontWeight: "normal" };
+  };
 
   const handleOptionChange = (optionIndex: number, checked: boolean) => {
     if (isSingleAnswer) {
@@ -52,6 +99,11 @@ export function QuestionCard({
     setShowAnswers(true);
   };
 
+  const handleReset = () => {
+    setShowAnswers(false);
+    onAnswerChange([]);
+  };
+
   return (
     <Card sx={{ maxWidth: 800, margin: "4rem auto" }}>
       <CardContent>
@@ -63,6 +115,14 @@ export function QuestionCard({
           {isSingleAnswer ? "Select one answer:" : "Select all that apply:"}
         </Typography>
 
+        {showAnswers && (
+          <Alert severity={isCorrect ? "success" : "error"} sx={{ mb: 2 }}>
+            <Typography variant="h6">
+              {isCorrect ? "Correct!" : "Incorrect"}
+            </Typography>
+          </Alert>
+        )}
+
         <FormControl component="fieldset" sx={{ width: "100%" }}>
           {isSingleAnswer ? (
             <RadioGroup
@@ -71,33 +131,77 @@ export function QuestionCard({
                 handleOptionChange(parseInt(event.target.value), true)
               }
             >
-              {question.options.map((option, index) => (
-                <FormControlLabel
-                  key={index}
-                  value={index}
-                  control={<Radio />}
-                  label={option.text}
-                  sx={{ mb: 1, alignItems: "flex-start" }}
-                />
-              ))}
+              {question.options.map((option, index) => {
+                const feedback = getOptionFeedback(index);
+                return (
+                  <FormControlLabel
+                    key={index}
+                    value={index}
+                    control={<Radio />}
+                    label={
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          minHeight: "24px",
+                        }}
+                      >
+                        {feedback.icon}
+                        <Typography
+                          sx={{
+                            color: feedback.color,
+                            fontWeight: feedback.fontWeight,
+                            lineHeight: "24px",
+                          }}
+                        >
+                          {option.text}
+                        </Typography>
+                      </Box>
+                    }
+                    sx={{ mb: 1, alignItems: "center" }}
+                  />
+                );
+              })}
             </RadioGroup>
           ) : (
             <FormGroup>
-              {question.options.map((option, index) => (
-                <FormControlLabel
-                  key={index}
-                  control={
-                    <Checkbox
-                      checked={question.selectedAnswers.includes(index)}
-                      onChange={(e) =>
-                        handleOptionChange(index, e.target.checked)
-                      }
-                    />
-                  }
-                  label={option.text}
-                  sx={{ mb: 1, alignItems: "flex-start" }}
-                />
-              ))}
+              {question.options.map((option, index) => {
+                const feedback = getOptionFeedback(index);
+                return (
+                  <FormControlLabel
+                    key={index}
+                    control={
+                      <Checkbox
+                        checked={question.selectedAnswers.includes(index)}
+                        onChange={(e) =>
+                          handleOptionChange(index, e.target.checked)
+                        }
+                      />
+                    }
+                    label={
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          minHeight: "24px",
+                        }}
+                      >
+                        {feedback.icon}
+                        <Typography
+                          sx={{
+                            color: feedback.color,
+                            fontWeight: feedback.fontWeight,
+                            lineHeight: "24px",
+                          }}
+                        >
+                          {option.text}
+                        </Typography>
+                      </Box>
+                    }
+                    sx={{ mb: 1, alignItems: "center" }}
+                  />
+                );
+              })}
             </FormGroup>
           )}
         </FormControl>
@@ -107,19 +211,12 @@ export function QuestionCard({
             <Button
               variant="outlined"
               color="primary"
-              onClick={handleCheckAnswers}
-              disabled={question.selectedAnswers.length === 0}
+              onClick={showAnswers ? handleReset : handleCheckAnswers}
+              disabled={!showAnswers && question.selectedAnswers.length === 0}
             >
-              Check Answer
+              {showAnswers ? "Reset" : "Check Answer"}
             </Button>
           </Box>
-        )}
-
-        {showAnswers && (
-          <AnswerFeedback
-            question={question}
-            onClose={() => setShowAnswers(false)}
-          />
         )}
       </CardContent>
     </Card>

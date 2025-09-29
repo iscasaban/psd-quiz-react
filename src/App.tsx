@@ -86,8 +86,18 @@ function App() {
     );
   }
 
-  if (loading) return <div>Loading questions...</div>;
-  if (allQuestions.length === 0) return <div>No questions found</div>;
+  if (loading)
+    return (
+      <Typography variant="body2" color="info">
+        Loading questions...
+      </Typography>
+    );
+  if (allQuestions.length === 0)
+    return (
+      <Typography variant="body2" color="error">
+        No questions found
+      </Typography>
+    );
 
   if (currentScreen === "mode-selection") {
     return (

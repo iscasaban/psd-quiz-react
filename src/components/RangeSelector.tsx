@@ -31,7 +31,6 @@ export function RangeSelector({
     let selectedQuestions: QuizQuestion[];
 
     if (range === null) {
-      // "All" option
       selectedQuestions = questions;
     } else {
       selectedQuestions = questions.slice(range.startIndex, range.endIndex + 1);
