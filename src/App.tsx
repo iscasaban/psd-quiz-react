@@ -1,161 +1,145 @@
-import "./App.css";
-import { useEffect, useState } from "react";
-import type { QuizMode, QuizQuestion } from "./types/quiz.ts";
-import { parseQuestionsFromMarkdown } from "./utils/parseMarkdown.ts";
-import answersContent from "./data/answers.md?raw";
-import { QuestionCard } from "./components/QuestionCard.tsx";
-import { ResultsModal } from "./components/ResultsModal.tsx";
-import { ModeSelector } from "./components/ModeSelector.tsx";
 import {
   AppBar,
-  Box,
-  Button,
   Container,
   Toolbar,
   Typography,
+  CircularProgress,
+  Alert,
+  Box,
 } from "@mui/material";
-import { useQuizState } from "./hooks/useQuizState.ts";
-import { RangeSelector } from "./components/RangeSelector.tsx";
+import { useNavigation } from "./hooks/useNavigation";
+import { useQuizState } from "./hooks/useQuizState";
+import { useQuestions } from "./context/QuestionContext";
+import { LandingScreen } from "./screens/LandingScreen";
+import { RangeSelectionScreen } from "./screens/RangeSelectionScreen";
+import { QuizScreen } from "./screens/QuizScreen";
+import { ResultsModal } from "./components/ResultsModal";
+import type { QuizMode, QuizQuestion } from "./types/quiz";
 
 function App() {
-  const [allQuestions, setAllQuestions] = useState<QuizQuestion[]>([]);
-  const [loading, setLoading] = useState(true);
-
+  const { allQuestions, loading, error } = useQuestions();
   const {
     currentScreen,
+    goToLanding,
+    goToRangeSelection,
+    startQuiz,
+    showResults,
+  } = useNavigation();
+  const {
     quizMode,
     currentQuestionIndex,
     quizQuestions,
-    navigateToScreen,
     setMode,
-    startQuiz,
+    initializeExamMode,
+    initializePracticeMode,
     nextQuestion,
     previousQuestion,
     updateQuestionAnswers,
     resetQuiz,
+    isLastQuestion,
+    canGoPrevious,
   } = useQuizState();
-
-  useEffect(() => {
-    try {
-      const parsedQuestions = parseQuestionsFromMarkdown(answersContent);
-      setAllQuestions(parsedQuestions);
-    } catch (error) {
-      console.error("Failed to parse questions:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
 
   const handleModeSelect = (mode: QuizMode) => {
     setMode(mode);
     if (mode === "exam") {
-      handleExamStart();
+      initializeExamMode(allQuestions);
+      startQuiz();
     } else {
-      navigateToScreen("range-selection");
+      goToRangeSelection();
     }
   };
 
   const handleRangeSelect = (selectedQuestions: QuizQuestion[]) => {
-    startQuiz(selectedQuestions);
+    initializePracticeMode(selectedQuestions);
+    startQuiz();
   };
 
-  const handleExamStart = () => {
-    const shuffledQuestions = [...allQuestions].sort(() => Math.random() - 0.5);
-    const selectedQuestions = shuffledQuestions.slice(0, 80);
-
-    const examQuestions = selectedQuestions.map((question, index) => ({
-      ...question,
-      id: index,
-      selectedAnswers: [],
-    }));
-
-    startQuiz(examQuestions);
+  const handleNext = () => {
+    if (isLastQuestion) {
+      showResults();
+    } else {
+      nextQuestion();
+    }
   };
 
   const handleRestart = () => {
     resetQuiz();
+    goToLanding();
   };
 
-  if (currentScreen === "range-selection") {
+  if (loading) {
     return (
-      <RangeSelector
-        questions={allQuestions}
-        onSelectRange={handleRangeSelect}
-        onBack={() => navigateToScreen("mode-selection")}
-      />
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
     );
   }
 
-  if (loading)
+  if (error) {
     return (
-      <Typography variant="body2" color="info">
-        Loading questions...
-      </Typography>
-    );
-  if (allQuestions.length === 0)
-    return (
-      <Typography variant="body2" color="error">
-        No questions found
-      </Typography>
-    );
-
-  if (currentScreen === "mode-selection") {
-    return (
-      <ModeSelector
-        totalQuestions={allQuestions.length}
-        onSelectMode={handleModeSelect}
-      />
+      <Container sx={{ mt: 4 }}>
+        <Alert severity="error">
+          Failed to load questions: {error.message}
+        </Alert>
+      </Container>
     );
   }
-
-  const currentQuestion = quizQuestions[currentQuestionIndex];
-  const totalQuestions = quizMode === "exam" ? 80 : quizQuestions.length;
 
   return (
     <>
-      <AppBar>
-        <Container maxWidth="xl">
-          <Toolbar disableGutters sx={{ marginInlineEnd: 4 }}>
-            <Typography variant="h6" color="secondary">
-              PSD I Quiz - {quizMode === "exam" ? "Exam" : "Practice"} Mode
-            </Typography>
-          </Toolbar>
-        </Container>
-      </AppBar>
+      {currentScreen === "quiz" && (
+        <AppBar position="sticky">
+          <Container maxWidth="xl">
+            <Toolbar>
+              <Typography variant="h6" color="secondary">
+                PSD I Quiz - {quizMode === "exam" ? "Exam" : "Practice"} Mode
+              </Typography>
+            </Toolbar>
+          </Container>
+        </AppBar>
+      )}
 
-      <Box>
-        <Typography variant="subtitle1" sx={{ mt: 7 }}>
-          Question {currentQuestionIndex + 1} of {totalQuestions}
-        </Typography>
+      <Container maxWidth="xl" sx={{ py: 4 }}>
+        {currentScreen === "landing" && (
+          <LandingScreen onModeSelect={handleModeSelect} />
+        )}
 
-        <QuestionCard
-          question={currentQuestion}
-          onAnswerChange={updateQuestionAnswers}
-          isPracticeMode={quizMode === "practice"}
-        />
+        {currentScreen === "range-selection" && (
+          <RangeSelectionScreen
+            onSelectRange={handleRangeSelect}
+            onBack={goToLanding}
+          />
+        )}
 
-        <Button
-          variant="outlined"
-          color="secondary"
-          onClick={previousQuestion}
-          disabled={currentQuestionIndex === 0}
-        >
-          Previous
-        </Button>
-
-        <Button variant="contained" onClick={nextQuestion}>
-          {currentQuestionIndex === quizQuestions.length - 1
-            ? "Finish Quiz"
-            : "Next"}
-        </Button>
+        {currentScreen === "quiz" && (
+          <QuizScreen
+            currentQuestion={quizQuestions[currentQuestionIndex]}
+            currentIndex={currentQuestionIndex}
+            totalQuestions={quizQuestions.length}
+            quizMode={quizMode}
+            onAnswerChange={updateQuestionAnswers}
+            onNext={handleNext}
+            onPrevious={previousQuestion}
+            canGoPrevious={canGoPrevious}
+            isLastQuestion={isLastQuestion}
+          />
+        )}
 
         <ResultsModal
           open={currentScreen === "results"}
           questions={quizQuestions}
-          onClose={() => navigateToScreen("quiz")}
+          onClose={() => startQuiz()}
           onRestart={handleRestart}
         />
-      </Box>
+      </Container>
     </>
   );
 }

@@ -1,34 +1,44 @@
+// hooks/useQuizState.ts
 import { useState } from "react";
-import type { AppScreen, QuizMode, QuizQuestion } from "../types/quiz";
+import type { QuizMode, QuizQuestion } from "../types/quiz";
+
+const EXAM_QUESTION_COUNT = 80;
+
+function prepareQuestions(questions: QuizQuestion[]): QuizQuestion[] {
+  return questions.map((question, index) => ({
+    ...question,
+    id: index,
+    selectedAnswers: [],
+  }));
+}
 
 export function useQuizState() {
-  const [currentScreen, setCurrentScreen] =
-    useState<AppScreen>("mode-selection");
   const [quizMode, setQuizMode] = useState<QuizMode>("exam");
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
-
-  const navigateToScreen = (screen: AppScreen) => {
-    setCurrentScreen(screen);
-  };
 
   const setMode = (mode: QuizMode) => {
     setQuizMode(mode);
   };
 
-  const startQuiz = (questions: QuizQuestion[]) => {
-    setQuizQuestions(questions);
-    setCurrentScreen("quiz");
+  const initializeExamMode = (allQuestions: QuizQuestion[]) => {
+    const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
+    const selected = shuffled.slice(0, EXAM_QUESTION_COUNT);
+    const prepared = prepareQuestions(selected);
+
+    setQuizQuestions(prepared);
+    setCurrentQuestionIndex(0);
+  };
+
+  const initializePracticeMode = (selectedQuestions: QuizQuestion[]) => {
+    const prepared = prepareQuestions(selectedQuestions);
+
+    setQuizQuestions(prepared);
     setCurrentQuestionIndex(0);
   };
 
   const nextQuestion = () => {
-    const isLastQuestion = currentQuestionIndex === quizQuestions.length - 1;
-    if (isLastQuestion) {
-      setCurrentScreen("results");
-    } else {
-      setCurrentQuestionIndex((prev) => prev + 1);
-    }
+    setCurrentQuestionIndex((prev) => prev + 1);
   };
 
   const previousQuestion = () => {
@@ -46,22 +56,22 @@ export function useQuizState() {
   };
 
   const resetQuiz = () => {
-    setCurrentScreen("mode-selection");
     setCurrentQuestionIndex(0);
     setQuizQuestions([]);
   };
 
   return {
-    currentScreen,
     quizMode,
     currentQuestionIndex,
     quizQuestions,
-    navigateToScreen,
     setMode,
-    startQuiz,
+    initializeExamMode,
+    initializePracticeMode,
     nextQuestion,
     previousQuestion,
     updateQuestionAnswers,
     resetQuiz,
+    isLastQuestion: currentQuestionIndex === quizQuestions.length - 1,
+    canGoPrevious: currentQuestionIndex > 0,
   };
 }

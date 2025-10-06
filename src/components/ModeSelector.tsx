@@ -1,4 +1,5 @@
 import { Box, Button, Typography } from "@mui/material";
+import { InfoCard } from "./InfoCard.tsx";
 
 interface ModeSelectorProps {
   totalQuestions: number;
@@ -10,38 +11,39 @@ export function ModeSelector({
   onSelectMode,
 }: ModeSelectorProps) {
   return (
-    <Box component="main">
-      <Typography variant="h1" color="secondary">
-        Professional Scrum Developer™ Certification quiz
+    <Box component="main" sx={{ py: 4 }}>
+      <Typography
+        variant="h3"
+        component="h1"
+        align="center"
+        gutterBottom
+        color="secondary"
+      >
+        Professional Scrum Developer™ Certification Quiz
       </Typography>
 
-      <div className="card">
-        <p>Prepare your PSD I certification with this quiz</p>
-        <p>
-          Currently, there are {totalQuestions} questions available. In the exam
-          mode, 80 will be selected randomly.
-        </p>
-        <p>
-          You can choose a specific range in <strong>practice mode.</strong>
-        </p>
-        <p>
-          In <strong>exam mode,</strong> 80 will be selected randomly.
-        </p>
-      </div>
+      <InfoCard>
+        <Typography variant="body1">
+          Prepare for your PSD I certification with this interactive quiz.
+        </Typography>
+        <Typography variant="body1">
+          <strong>{totalQuestions} questions</strong> are currently available.
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          • <strong>Practice Mode:</strong> Choose specific question ranges and
+          get immediate feedback
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          • <strong>Exam Mode:</strong> Test yourself with 80 randomly selected
+          questions
+        </Typography>
+      </InfoCard>
 
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          gap: 2,
-          mt: 3,
-          mr: 2,
-          ml: 2,
-        }}
-      >
+      <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 4 }}>
         <Button
           variant="contained"
           color="primary"
+          size="large"
           onClick={() => onSelectMode("exam")}
         >
           Exam Mode
@@ -49,6 +51,7 @@ export function ModeSelector({
         <Button
           variant="outlined"
           color="primary"
+          size="large"
           onClick={() => onSelectMode("practice")}
         >
           Practice Mode

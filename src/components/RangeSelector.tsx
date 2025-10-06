@@ -1,6 +1,7 @@
 import { Box, Button, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import type { QuizQuestion } from "../types/quiz.ts";
+import { InfoCard } from "./InfoCard.tsx";
 
 interface RangeSelectorProps {
   questions: QuizQuestion[];
@@ -52,13 +53,15 @@ export function RangeSelector({
         Practice Mode
       </Typography>
 
-      <div className="card">
-        <p>Select a question range to practice:</p>
-        <p>
+      <InfoCard>
+        <Typography variant="body1">
+          Select a question range to practice:
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
           Choose from predefined ranges or practice all {questions.length}{" "}
           questions.
-        </p>
-      </div>
+        </Typography>
+      </InfoCard>
 
       <Grid container spacing={2} sx={{ mt: 2, maxWidth: 600 }}>
         {QUESTION_RANGES.map((range) => (
