@@ -1,62 +1,67 @@
-import { Box, Button, Typography } from "@mui/material";
-import { InfoCard } from "./InfoCard.tsx";
+import { Box, Button } from "@mui/material";
+import SchoolIcon from "@mui/icons-material/School";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
+import type { QuizMode } from "../types/quiz";
 
 interface ModeSelectorProps {
-  totalQuestions: number;
-  onSelectMode: (mode: "exam" | "practice") => void;
+  onSelectMode: (mode: QuizMode) => void;
 }
 
-export function ModeSelector({
-  totalQuestions,
-  onSelectMode,
-}: ModeSelectorProps) {
+export function ModeSelector({ onSelectMode }: ModeSelectorProps) {
   return (
-    <Box component="main" sx={{ py: 4 }}>
-      <Typography
-        variant="h3"
-        component="h1"
-        align="center"
-        gutterBottom
-        color="secondary"
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: { xs: "column", sm: "row" },
+        gap: 2,
+        justifyContent: { xs: "center", lg: "flex-start" },
+      }}
+    >
+      <Button
+        variant="contained"
+        color="primary"
+        size="large"
+        onClick={() => onSelectMode("exam")}
+        startIcon={<SchoolIcon />}
+        sx={{
+          fontSize: "1rem",
+          fontWeight: 600,
+          px: 4,
+          py: 2,
+          boxShadow: 3,
+          "&:hover": {
+            boxShadow: 6,
+            transform: "translateY(-2px)",
+          },
+          transition: "all 0.3s ease",
+        }}
       >
-        Professional Scrum Developer™ Certification Quiz
-      </Typography>
+        Exam Mode
+      </Button>
 
-      <InfoCard>
-        <Typography variant="body1">
-          Prepare for your PSD I certification with this interactive quiz.
-        </Typography>
-        <Typography variant="body1">
-          <strong>{totalQuestions} questions</strong> are currently available.
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          • <strong>Practice Mode:</strong> Choose specific question ranges and
-          get immediate feedback
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          • <strong>Exam Mode:</strong> Test yourself with 80 randomly selected
-          questions
-        </Typography>
-      </InfoCard>
-
-      <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 4 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          size="large"
-          onClick={() => onSelectMode("exam")}
-        >
-          Exam Mode
-        </Button>
-        <Button
-          variant="outlined"
-          color="primary"
-          size="large"
-          onClick={() => onSelectMode("practice")}
-        >
-          Practice Mode
-        </Button>
-      </Box>
+      <Button
+        variant="outlined"
+        color="primary"
+        size="large"
+        onClick={() => onSelectMode("practice")}
+        startIcon={<MenuBookIcon />}
+        sx={{
+          fontSize: "1rem",
+          fontWeight: 600,
+          px: 4,
+          py: 2,
+          borderWidth: 2,
+          backgroundColor: "transparent",
+          "&:hover": {
+            borderWidth: 2,
+            backgroundColor: "rgba(30, 212, 161, 0.08)",
+            transform: "translateY(-2px)",
+          },
+          transition: "all 0.3s ease",
+        }}
+      >
+        Practice Mode
+      </Button>
     </Box>
   );
 }

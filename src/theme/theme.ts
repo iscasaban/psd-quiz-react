@@ -31,7 +31,7 @@ export const theme = createTheme({
       fontWeight: 400,
     },
     h1: {
-      fontSize: "3.5rem",
+      fontSize: "3rem",
       fontWeight: 700,
     },
     subtitle1: {
