@@ -1,69 +1,163 @@
-# React + TypeScript + Vite
+# PSD I Quiz Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React-based quiz application for Professional Scrum Developer I (PSD I) certification practice, featuring 305 questions with both exam and practice modes.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Exam Mode**: 80 randomly selected questions from the full question bank
+- **Practice Mode**: Select specific question ranges for targeted study
+- **Interactive UI**: Material-UI components with responsive design
+- **Real-time Feedback**: Immediate answer validation in practice mode
+- **Progress Tracking**: Visual progress indicators and quiz navigation
+- **Results Summary**: Comprehensive scoring and performance analysis
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Frontend**: React 19+ with TypeScript
+- **Styling**: Material-UI (MUI) with custom theme
+- **Build Tool**: Vite for fast development and optimized builds
+- **Testing**: Vitest with React Testing Library
+- **Linting**: ESLint with TypeScript support
+- **Fonts**: Rubik font family
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Getting Started
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+### Prerequisites
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Node.js 18+
+- npm or yarn
+
+### Installation
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd psd-quiz-react
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Available Scripts
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+# Development
+npm run dev          # Start development server with hot reload
+npm run preview      # Preview production build locally
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Building
+npm run build        # Build for production (TypeScript + Vite)
+
+# Code Quality
+npm run lint         # Run ESLint
+npm run typecheck    # Run TypeScript compiler check
+
+# Testing
+npm test             # Run all tests
+npm test -- --watch # Run tests in watch mode
+npm test -- --coverage # Generate coverage report
+npm test -- <pattern> # Run specific test files
+```
+
+## Project Structure
+
+```
+src/
+├── components/          # Reusable UI components
+│   ├── QuestionCard.tsx    # Question display with answer options
+│   ├── QuizProgress.tsx    # Progress indicator
+│   ├── QuizNavigation.tsx  # Previous/Next controls
+│   └── ResultsModal.tsx    # Results summary modal
+├── screens/            # Screen-level components
+│   ├── LandingScreen.tsx   # Mode selection
+│   ├── RangeSelectionScreen.tsx # Practice mode setup
+│   └── QuizScreen.tsx      # Main quiz interface
+├── hooks/              # Custom React hooks
+│   ├── useNavigation.ts    # Screen navigation logic
+│   └── useQuizState.ts     # Quiz state management
+├── context/            # React Context providers
+│   └── QuestionContext.tsx # Question data provider
+├── utils/              # Utility functions
+│   └── parseMarkdown.ts    # Question parsing logic
+├── data/               # Static data
+│   └── answers.md          # Question bank (1400+ questions)
+├── theme/              # MUI theme configuration
+│   └── theme.ts            # Custom theme settings
+└── types/              # TypeScript type definitions
+    └── quiz.ts             # Quiz-related types
+```
+
+## Question Format
+
+Questions are stored in markdown format (`src/data/answers.md`):
+
+```markdown
+### What is React?
+
+- [ ] A database system
+- [x] A JavaScript library for building user interfaces
+- [ ] A CSS framework
+- [x] A declarative UI library
+```
+
+- Questions use H3 headers (`###`)
+- Multiple choice options with checkboxes
+- Correct answers marked with `[x]`
+- Incorrect answers marked with `[ ]`
+
+## Development Guidelines
+
+### Code Style
+- Use functional components with hooks (no class components)
+- Prefer named exports over default exports
+- Keep components under 200 lines; extract logic to custom hooks
+- File naming: PascalCase for components, camelCase for utilities
+
+### Testing Patterns
+- **Components**: Use React Testing Library with MUI TestWrapper
+- **Hooks**: Use `renderHook` and `act` from React Testing Library
+- **Utilities**: Focus on edge cases and data transformation
+- **Mocking**: Use `vi.fn()` for function mocks, mock browser APIs in setup
+
+### State Management
+- **Navigation**: `useNavigation` hook for screen transitions
+- **Quiz Logic**: `useQuizState` hook for questions, answers, and progress
+- **Global Data**: `QuestionContext` for parsed questions
+- **Local State**: Standard React hooks for component-specific state
+
+## Architecture
+
+### Quiz Modes
+- **Exam Mode**: 80 randomly shuffled questions, immediate start
+- **Practice Mode**: User-selected question ranges, optional answer checking
+
+### Navigation Flow
+```
+Landing → [Mode Selection] → Range Selection (Practice only) → Quiz → Results
+```
+
+### State Flow
+1. Questions loaded from markdown and parsed via context
+2. Mode selection initializes appropriate question set
+3. Quiz state tracks current question, user answers, and progress
+4. Results calculated and displayed upon completion
+
+## Testing
+
+The project uses Vitest with comprehensive test coverage:
+
+- **Unit Tests**: Individual functions and utilities
+- **Hook Tests**: Custom React hooks with state management
+- **Component Tests**: UI components with user interactions
+- **Integration Tests**: Complete user workflows
+
+### Test Commands
+```bash
+npm test                    # Run all tests
+npm test -- --ui           # Interactive test UI
+npm test -- --coverage     # Coverage report
+npm test -- <pattern>      # Run specific tests
 ```
