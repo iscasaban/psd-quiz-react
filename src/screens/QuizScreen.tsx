@@ -10,7 +10,7 @@ interface QuizScreenProps {
   currentIndex: number;
   totalQuestions: number;
   quizMode: QuizMode;
-  onAnswerChange: (answers: number[]) => void;
+  onAnswerChange: (questionId: number, answers: number[]) => void;
   onNext: () => void;
   onPrevious: () => void;
   canGoPrevious: boolean;

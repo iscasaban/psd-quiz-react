@@ -19,7 +19,7 @@ import { useState, useEffect } from "react";
 
 interface QuestionCardProps {
   question: QuizQuestion;
-  onAnswerChange: (selectedAnswers: number[]) => void;
+  onAnswerChange: (questionId: number, selectedAnswers: number[]) => void;
   isPracticeMode?: boolean;
 }
 
@@ -82,7 +82,7 @@ export function QuestionCard({
 
   const handleOptionChange = (optionIndex: number, checked: boolean) => {
     if (isSingleAnswer) {
-      onAnswerChange(checked ? [optionIndex] : []);
+      onAnswerChange(question.id, checked ? [optionIndex] : []);
     } else {
       const currentSelected = question.selectedAnswers;
       let newSelected: number[];
@@ -91,7 +91,7 @@ export function QuestionCard({
       } else {
         newSelected = currentSelected.filter((index) => index !== optionIndex);
       }
-      onAnswerChange(newSelected);
+      onAnswerChange(question.id, newSelected);
     }
   };
 
@@ -101,7 +101,7 @@ export function QuestionCard({
 
   const handleReset = () => {
     setShowAnswers(false);
-    onAnswerChange([]);
+    onAnswerChange(question.id, []);
   };
 
   return (

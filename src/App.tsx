@@ -69,6 +69,15 @@ function App() {
     goToLanding();
   };
 
+  const handleAnswerChange = (
+    _questionId: number,
+    selectedAnswers: number[],
+  ) => {
+    // The questionId parameter ensures we're updating the correct question
+    // but useQuizState handles this via currentQuestionIndex, so we just pass selectedAnswers
+    updateQuestionAnswers(selectedAnswers);
+  };
+
   if (loading) {
     return (
       <Box
@@ -131,7 +140,7 @@ function App() {
             currentIndex={currentQuestionIndex}
             totalQuestions={quizQuestions.length}
             quizMode={quizMode}
-            onAnswerChange={updateQuestionAnswers}
+            onAnswerChange={handleAnswerChange}
             onNext={handleNext}
             onPrevious={previousQuestion}
             canGoPrevious={canGoPrevious}

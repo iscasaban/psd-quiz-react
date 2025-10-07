@@ -48,11 +48,14 @@ export function useQuizState() {
   };
 
   const updateQuestionAnswers = (selectedAnswers: number[]) => {
-    setQuizQuestions((prev) =>
-      prev.map((q, index) =>
-        index === currentQuestionIndex ? { ...q, selectedAnswers } : q,
-      ),
-    );
+    setCurrentQuestionIndex((currentIndex) => {
+      setQuizQuestions((prev) =>
+        prev.map((q, index) =>
+          index === currentIndex ? { ...q, selectedAnswers } : q,
+        ),
+      );
+      return currentIndex; // Don't change the index
+    });
   };
 
   const resetQuiz = () => {
