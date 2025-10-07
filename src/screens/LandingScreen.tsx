@@ -20,7 +20,7 @@ export function LandingScreen({ onModeSelect }: LandingScreenProps) {
         alignItems: "center",
         justifyContent: "center",
         px: 2,
-        py: { xs: 6, md: 10 },
+        py: { xs: 4, md: 6 },
       }}
     >
       <Container maxWidth="xl">
