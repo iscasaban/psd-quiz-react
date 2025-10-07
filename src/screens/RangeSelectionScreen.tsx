@@ -4,20 +4,14 @@ import { useQuestions } from "../context/QuestionContext.tsx";
 
 interface RangeSelectionScreenProps {
   onSelectRange: (questions: QuizQuestion[]) => void;
-  onBack: () => void;
 }
 
 export function RangeSelectionScreen({
   onSelectRange,
-  onBack,
 }: RangeSelectionScreenProps) {
   const { allQuestions } = useQuestions();
 
   return (
-    <RangeSelector
-      questions={allQuestions}
-      onSelectRange={onSelectRange}
-      onBack={onBack}
-    />
+    <RangeSelector questions={allQuestions} onSelectRange={onSelectRange} />
   );
 }

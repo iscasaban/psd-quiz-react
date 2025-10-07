@@ -5,7 +5,6 @@ import type { QuizQuestion } from "../types/quiz.ts";
 interface RangeSelectorProps {
   questions: QuizQuestion[];
   onSelectRange: (selectedQuestions: QuizQuestion[]) => void;
-  onBack: () => void;
 }
 
 interface QuestionRange {
@@ -25,7 +24,6 @@ const QUESTION_RANGES: QuestionRange[] = [
 export function RangeSelector({
   questions,
   onSelectRange,
-  onBack,
 }: RangeSelectorProps) {
   const handleRangeSelect = (range: QuestionRange | null) => {
     let selectedQuestions: QuizQuestion[];
@@ -36,7 +34,6 @@ export function RangeSelector({
       selectedQuestions = questions.slice(range.startIndex, range.endIndex + 1);
     }
 
-    // Reset IDs and selected answers
     const practiceQuestions = selectedQuestions.map((question, index) => ({
       ...question,
       id: index,
@@ -47,20 +44,34 @@ export function RangeSelector({
   };
 
   return (
-    <Box component="main">
-      <Typography variant="h1" color="secondary">
-        Practice Mode
-      </Typography>
+    <Box
+      component="main"
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        textAlign: "center",
+        py: 4,
+      }}
+    >
+      <Box sx={{ mb: 4, maxWidth: 600 }}>
+        <Typography variant="body1" sx={{ mb: 1 }}>
+          Select a question range to practice:
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Choose from predefined ranges or practice all {questions.length}{" "}
+          questions.
+        </Typography>
+      </Box>
 
-      <Typography variant="body1">
-        Select a question range to practice:
-      </Typography>
-      <Typography variant="body2" color="text.secondary">
-        Choose from predefined ranges or practice all {questions.length}{" "}
-        questions.
-      </Typography>
-
-      <Grid container spacing={2} sx={{ mt: 2, maxWidth: 600 }}>
+      <Grid
+        container
+        spacing={2}
+        sx={{
+          maxWidth: 600,
+          justifyContent: "center",
+        }}
+      >
         {QUESTION_RANGES.map((range) => (
           <Grid size={{ xs: 6, sm: 4 }} key={range.label}>
             <Button
@@ -87,12 +98,6 @@ export function RangeSelector({
           </Button>
         </Grid>
       </Grid>
-
-      <Box sx={{ mt: 4 }}>
-        <Button variant="text" onClick={onBack}>
-          ← Back to Mode Selection
-        </Button>
-      </Box>
     </Box>
   );
 }

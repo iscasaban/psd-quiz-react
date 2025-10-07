@@ -6,6 +6,7 @@ import {
   CircularProgress,
   Alert,
   Box,
+  Button,
 } from "@mui/material";
 import { useNavigation } from "./hooks/useNavigation";
 import { useQuizState } from "./hooks/useQuizState";
@@ -95,13 +96,21 @@ function App() {
 
   return (
     <>
-      {currentScreen === "quiz" && (
+      {(currentScreen === "quiz" || currentScreen === "range-selection") && (
         <AppBar position="sticky">
           <Container maxWidth="xl">
-            <Toolbar>
+            <Toolbar sx={{ justifyContent: "space-between" }}>
               <Typography variant="h6" color="secondary">
                 PSD I Quiz - {quizMode === "exam" ? "Exam" : "Practice"} Mode
               </Typography>
+
+              <Button
+                color="inherit"
+                onClick={goToLanding}
+                sx={{ color: "secondary.main" }}
+              >
+                ← Back to Mode Selection
+              </Button>
             </Toolbar>
           </Container>
         </AppBar>
@@ -113,10 +122,7 @@ function App() {
         )}
 
         {currentScreen === "range-selection" && (
-          <RangeSelectionScreen
-            onSelectRange={handleRangeSelect}
-            onBack={goToLanding}
-          />
+          <RangeSelectionScreen onSelectRange={handleRangeSelect} />
         )}
 
         {currentScreen === "quiz" && (
