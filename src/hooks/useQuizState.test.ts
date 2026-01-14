@@ -193,7 +193,7 @@ describe('useQuizState', () => {
 
   describe('Question Navigation', () => {
     beforeEach(() => {
-      // Helper to setup a quiz with questions
+      // Helper to set up a quiz with questions
     })
 
     it('should navigate to next question', () => {

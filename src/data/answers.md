@@ -148,7 +148,7 @@
 - [ ] The Scrum Master.
 - [ ] The Scrum Team.
 - [ ] Team Manager.
-- [ ] Subject matter experts.
+- [ ] Subject-matter experts.
 - [x] The Developers.
 
 
@@ -345,8 +345,8 @@
 
 - [ ] Code with low Cyclomatic Complexity.
 - [x] Code with minimal duplication.
-- [ ] Code that has not been peer reviewed.
-- [ ] Code that has been peer reviewed.
+- [ ] Code that has not been peer-reviewed.
+- [ ] Code that has been peer-reviewed.
 
 
 
@@ -589,7 +589,7 @@
 
 ### Does delivering changes frequently and directly into Production help to reduce risk? (choose two)
 
-- [x] Yes, because the changes you make are much smaller and it is easier to fix problems.
+- [x] Yes, because the changes you make are much smaller, and it is easier to fix problems.
 - [ ] No, because each release means a risk to break something so releasing more frequently would increase the risk.
 - [ ] Yes, because frequent release encourage the Developers to automate the release process.
 - [x] Yes, because you get earlier feedback and can learn faster.
@@ -792,7 +792,7 @@
 
 
 
-### The Developers selects a set of Product Backlog Items for a Sprint Backlog with the intent to get the selected items "Done" by the end of the Sprint. Which three phrases best describe the purpose of a Definition of Done? (choose the best three answers)
+### The Developers select a set of Product Backlog Items for a Sprint Backlog with the intent to get the selected items "Done" by the end of the Sprint. Which three phrases best describe the purpose of a Definition of Done? (choose the best three answers)
 
 - [ ] It provides a template for elements that need to be included in the technical documentation.
 - [x] It guides the Developers in creating a forecast at the Sprint Planning.
@@ -886,9 +886,9 @@
 
 
 
-### A Scrum Master is working with the Developers that has members in different physical locations. The Developers meets in a variety of meeting rooms and has much to do logistically (for example, set up conference calls) before the Daily Scrum. What action should the Scrum Master take? (choose the best answer)
+### A Scrum Master is working with the Developers that has members in different physical locations. The Developers meet in a variety of meeting rooms and has much to do logistically (for example, set up conference calls) before the Daily Scrum. What action should the Scrum Master take? (choose the best answer)
 
-- [ ] Ask the Developers to alternate who is responsible for meeting setup.
+- [ ] Ask the Developers to alternate who is responsible for meeting setup.
 - [ ] Set up the meeting and tell the Developers that is how it will be done.
 - [ ] Inform Management and ask them to solve it.
 - [x] Allow the Developers to self-manage and determine for itself what to do.
@@ -1351,7 +1351,7 @@
 ### What is the recommended size for a Scrum Team? (choose the best answer)
 
 - [ ] Minimum of 7.
-- [ ] 9.
+- [ ] 9 people.
 - [x] Typically, 10 or fewer people.
 - [ ] 7 plus or minus 2.
 
@@ -2715,7 +2715,7 @@
 - [x] 10 or fewer.
 - [ ] Minimum of 7.
 - [ ] 7 plus or minus 2.
-- [ ] 9.
+- [ ] 9 people.
 
 
 

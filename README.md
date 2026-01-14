@@ -92,7 +92,7 @@ src/
 
 ## Question Format
 
-Questions are stored in markdown format (`src/data/answers.md`):
+Questions are stored in Markdown format (`src/data/answers.md`):
 
 ```markdown
 ### What is React?
