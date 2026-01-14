@@ -43,8 +43,8 @@ export function QuestionCard({
     .map((option, index) => (option.isCorrect ? index : -1))
     .filter((index) => index !== -1);
 
-  const selectedIndices = question.selectedAnswers.sort();
-  const correctIndicesSorted = correctIndices.sort();
+  const selectedIndices = [...question.selectedAnswers].sort();
+  const correctIndicesSorted = [...correctIndices].sort();
 
   const isCorrect =
     selectedIndices.length === correctIndicesSorted.length &&
