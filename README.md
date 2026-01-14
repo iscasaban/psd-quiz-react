@@ -2,6 +2,9 @@
 
 A React-based quiz application for Professional Scrum Developer I (PSD I) certification practice, featuring 305 questions with both exam and practice modes.
 
+The questions used on this app are extracted from [Ditectrev](https://github.com/Ditectrev/Scrum-Developer-I-PSD-I-Practice-Tests-Exams-Questions-Answers).
+This is a project created merely for educational purposes, as I was bored studying for the PSD I certification. Spoiler: [I passed!](https://www.credly.com/badges/c635a845-2f48-42e9-be6d-464075379c64) 🎉😊
+
 ## Features
 
 - **Exam Mode**: 80 randomly selected questions from the full question bank
@@ -66,28 +69,42 @@ npm test -- <pattern> # Run specific test files
 
 ```
 src/
-├── components/          # Reusable UI components
-│   ├── QuestionCard.tsx    # Question display with answer options
-│   ├── QuizProgress.tsx    # Progress indicator
-│   ├── QuizNavigation.tsx  # Previous/Next controls
-│   └── ResultsModal.tsx    # Results summary modal
-├── screens/            # Screen-level components
-│   ├── LandingScreen.tsx   # Mode selection
-│   ├── RangeSelectionScreen.tsx # Practice mode setup
-│   └── QuizScreen.tsx      # Main quiz interface
-├── hooks/              # Custom React hooks
-│   ├── useNavigation.ts    # Screen navigation logic
-│   └── useQuizState.ts     # Quiz state management
-├── context/            # React Context providers
-│   └── QuestionContext.tsx # Question data provider
-├── utils/              # Utility functions
-│   └── parseMarkdown.ts    # Question parsing logic
-├── data/               # Static data
-│   └── answers.md          # Question bank (1400+ questions)
-├── theme/              # MUI theme configuration
-│   └── theme.ts            # Custom theme settings
-└── types/              # TypeScript type definitions
-    └── quiz.ts             # Quiz-related types
+├── components/              # Reusable UI components
+│   ├── HeroContent.tsx         # Landing page hero text
+│   ├── HeroImage.tsx           # Landing page hero image
+│   ├── ModeSelector.tsx        # Exam/Practice mode buttons
+│   ├── QuestionCard.tsx        # Question display with answer options
+│   ├── QuestionCard.test.tsx   # QuestionCard tests
+│   ├── QuizNavigation.tsx      # Previous/Next controls
+│   ├── QuizProgress.tsx        # Progress indicator
+│   ├── RangeSelector.tsx       # Question range selection grid
+│   ├── ResultsModal.tsx        # Results summary modal
+│   └── ResultsModal.test.tsx   # ResultsModal tests
+├── screens/                 # Screen-level components
+│   ├── LandingScreen.tsx       # Mode selection
+│   ├── QuizScreen.tsx          # Main quiz interface
+│   └── RangeSelectionScreen.tsx # Practice mode range picker
+├── hooks/                   # Custom React hooks
+│   ├── useNavigation.ts        # Screen navigation state
+│   ├── useNavigation.test.ts   # Navigation hook tests
+│   ├── useQuestions.ts         # Context hook for questions
+│   ├── useQuizState.ts         # Quiz state management
+│   └── useQuizState.test.ts    # Quiz state tests
+├── context/                 # React Context providers
+│   └── QuestionContext.tsx     # Question data provider
+├── utils/                   # Utility functions
+│   ├── parseMarkdown.ts        # Question parsing logic
+│   └── parseMarkdown.test.ts   # Parser tests
+├── data/                    # Static data
+│   └── answers.md              # Question bank (305 questions)
+├── theme/                   # MUI theme configuration
+│   └── theme.ts                # Custom theme settings
+├── types/                   # TypeScript type definitions
+│   ├── navigation.ts           # Navigation types
+│   └── quiz.ts                 # Quiz-related types
+├── test/                    # Test configuration
+│   └── setup.ts                # Vitest setup with jest-dom
+└── App.tsx                  # Main application component
 ```
 
 ## Question Format
@@ -123,10 +140,17 @@ Questions are stored in Markdown format (`src/data/answers.md`):
 - **Mocking**: Use `vi.fn()` for function mocks, mock browser APIs in setup
 
 ### State Management
-- **Navigation**: `useNavigation` hook for screen transitions
-- **Quiz Logic**: `useQuizState` hook for questions, answers, and progress
-- **Global Data**: `QuestionContext` for parsed questions
-- **Local State**: Standard React hooks for component-specific state
+
+The application uses custom hooks for state management:
+
+| Hook            | Purpose                                                         |
+|-----------------|-----------------------------------------------------------------|
+| `useNavigation` | Screen transitions (landing → range-selection → quiz → results) |
+| `useQuizState`  | Quiz logic: questions, current index, answers, mode             |
+| `useQuestions`  | Access to parsed questions from context                         |
+
+- **QuestionContext**: Loads and parses questions from markdown at app startup
+- **Local State**: Component-specific state using standard React hooks
 
 ## Architecture
 
@@ -147,17 +171,23 @@ Landing → [Mode Selection] → Range Selection (Practice only) → Quiz → Re
 
 ## Testing
 
-The project uses Vitest with comprehensive test coverage:
+The project uses Vitest with React Testing Library. Current test coverage:
 
-- **Unit Tests**: Individual functions and utilities
-- **Hook Tests**: Custom React hooks with state management
-- **Component Tests**: UI components with user interactions
-- **Integration Tests**: Complete user workflows
+| Module          | Tests | Coverage                                     |
+|-----------------|-------|----------------------------------------------|
+| `useQuizState`  | 25    | Exam/practice modes, navigation, answers     |
+| `QuestionCard`  | 21    | Single/multi-select, practice mode, feedback |
+| `ResultsModal`  | 11    | Score calculation, pass/fail, interactions   |
+| `useNavigation` | 5     | Screen transitions                           |
+| `parseMarkdown` | 4     | Question parsing, edge cases                 |
+
+**Total: 66 tests**
 
 ### Test Commands
 ```bash
-npm test                    # Run all tests
+npm test                    # Run all tests (watch mode)
+npm test -- --run          # Run tests once
 npm test -- --ui           # Interactive test UI
 npm test -- --coverage     # Coverage report
-npm test -- <pattern>      # Run specific tests
+npm test -- <pattern>      # Run specific test files
 ```
