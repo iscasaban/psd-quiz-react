@@ -7,27 +7,29 @@ export function parseQuestionsFromMarkdown(
     .split(/^### /m)
     .filter((block) => block.trim().length > 0);
 
-  return questionBlocks.map((block, index) => {
-    const lines = block.trim().split("\n");
-    const questionText = lines[0].trim();
+  return questionBlocks
+    .map((block, index) => {
+      const lines = block.trim().split("\n");
+      const questionText = lines[0].trim();
 
-    const optionLines = lines
-      .slice(1)
-      .filter((line) => line.trim().match(/^- \[[x ]]/));
+      const optionLines = lines
+        .slice(1)
+        .filter((line) => line.trim().match(/^- \[[x ]]/));
 
-    const options = optionLines.map((line) => {
-      const trimmedLine = line.trim();
-      const isCorrect = trimmedLine.includes("- [x]"); // More explicit check
-      const text = trimmedLine.replace(/^- \[[x ]]\s*/, "").trim();
+      const options = optionLines.map((line) => {
+        const trimmedLine = line.trim();
+        const isCorrect = trimmedLine.includes("- [x]"); // More explicit check
+        const text = trimmedLine.replace(/^- \[[x ]]\s*/, "").trim();
 
-      return { text, isCorrect };
-    });
+        return { text, isCorrect };
+      });
 
-    return {
-      id: index,
-      question: questionText,
-      options,
-      selectedAnswers: [],
-    };
-  });
+      return {
+        id: index,
+        question: questionText,
+        options,
+        selectedAnswers: [],
+      };
+    })
+    .filter((question) => question.options.length > 0);
 }

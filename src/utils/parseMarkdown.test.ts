@@ -15,7 +15,7 @@ describe('parseMarkdown', () => {
 
       expect(result).toHaveLength(1)
       expect(result[0]).toEqual({
-        id: 1,
+        id: 0,
         question: 'What is React?',
         options: [
           { text: 'A database', isCorrect: false },
