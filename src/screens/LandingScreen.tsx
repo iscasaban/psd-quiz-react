@@ -1,7 +1,7 @@
 import { Box, Container } from "@mui/material";
 import { HeroImage } from "../components/HeroImage";
 import { HeroContent } from "../components/HeroContent";
-import { useQuestions } from "../context/QuestionContext";
+import { useQuestions } from "../hooks/useQuestions";
 import type { QuizMode } from "../types/quiz";
 
 interface LandingScreenProps {

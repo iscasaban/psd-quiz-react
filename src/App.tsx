@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useNavigation } from "./hooks/useNavigation";
 import { useQuizState } from "./hooks/useQuizState";
-import { useQuestions } from "./context/QuestionContext";
+import { useQuestions } from "./hooks/useQuestions";
 import { LandingScreen } from "./screens/LandingScreen";
 import { RangeSelectionScreen } from "./screens/RangeSelectionScreen";
 import { QuizScreen } from "./screens/QuizScreen";
