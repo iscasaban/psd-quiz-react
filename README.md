@@ -10,6 +10,7 @@ This is a project created merely for educational purposes, as I was bored studyi
 - **Exam Mode**: 80 randomly selected questions from the full question bank
 - **Practice Mode**: Select specific question ranges for targeted study
 - **Interactive UI**: Material-UI components with responsive design
+- **Persistent Navigation**: Navbar with quick access to all modes from any screen
 - **Real-time Feedback**: Immediate answer validation in practice mode
 - **Progress Tracking**: Visual progress indicators and quiz navigation
 - **Results Summary**: Comprehensive scoring and performance analysis
@@ -70,9 +71,12 @@ npm test -- <pattern> # Run specific test files
 ```
 src/
 ├── components/              # Reusable UI components
+│   ├── Footer.tsx              # App footer
+│   ├── Footer.test.tsx         # Footer tests
 │   ├── HeroContent.tsx         # Landing page hero text
-│   ├── HeroImage.tsx           # Landing page hero image
 │   ├── ModeSelector.tsx        # Exam/Practice mode buttons
+│   ├── Navbar.tsx              # Persistent navigation bar
+│   ├── Navbar.test.tsx         # Navbar tests
 │   ├── QuestionCard.tsx        # Question display with answer options
 │   ├── QuestionCard.test.tsx   # QuestionCard tests
 │   ├── QuizNavigation.tsx      # Previous/Next controls
@@ -81,6 +85,8 @@ src/
 │   ├── ResultsModal.tsx        # Results summary modal
 │   └── ResultsModal.test.tsx   # ResultsModal tests
 ├── screens/                 # Screen-level components
+│   ├── AboutScreen.tsx         # About page
+│   ├── AboutScreen.test.tsx    # AboutScreen tests
 │   ├── LandingScreen.tsx       # Mode selection
 │   ├── QuizScreen.tsx          # Main quiz interface
 │   └── RangeSelectionScreen.tsx # Practice mode range picker
@@ -143,11 +149,11 @@ Questions are stored in Markdown format (`src/data/answers.md`):
 
 The application uses custom hooks for state management:
 
-| Hook            | Purpose                                                         |
-|-----------------|-----------------------------------------------------------------|
-| `useNavigation` | Screen transitions (landing → range-selection → quiz → results) |
-| `useQuizState`  | Quiz logic: questions, current index, answers, mode             |
-| `useQuestions`  | Access to parsed questions from context                         |
+| Hook            | Purpose                                                                    |
+|-----------------|----------------------------------------------------------------------------|
+| `useNavigation` | Screen transitions (landing, range-selection, quiz, results, about)        |
+| `useQuizState`  | Quiz logic: questions, current index, answers, mode                        |
+| `useQuestions`  | Access to parsed questions from context                                    |
 
 - **QuestionContext**: Loads and parses questions from markdown at app startup
 - **Local State**: Component-specific state using standard React hooks
@@ -159,9 +165,31 @@ The application uses custom hooks for state management:
 - **Practice Mode**: User-selected question ranges, optional answer checking
 
 ### Navigation Flow
+
+The app features a persistent navbar visible on all screens with links to Home, Exam, Practice, and About.
+
 ```
-Landing → [Mode Selection] → Range Selection (Practice only) → Quiz → Results
+┌─────────────────────────────────────────────────────────────┐
+│                    Navbar (always visible)                  │
+│              Home | Exam | Practice | About                 │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│   Landing ──┬── Exam ─────────────────┬──► Quiz ──► Results │
+│             │                         │                     │
+│             └── Practice ──► Range ───┘                     │
+│                              Selection                      │
+│                                                             │
+│   About (standalone page)                                   │
+│                                                             │
+├─────────────────────────────────────────────────────────────┤
+│                    Footer (always visible)                  │
+└─────────────────────────────────────────────────────────────┘
 ```
+
+- **Home**: Returns to landing screen and resets quiz state
+- **Exam**: Starts exam mode immediately with 80 random questions
+- **Practice**: Goes to range selection screen
+- **About**: Displays information about the app
 
 ### State Flow
 1. Questions loaded from markdown and parsed via context
@@ -178,10 +206,13 @@ The project uses Vitest with React Testing Library. Current test coverage:
 | `useQuizState`  | 25    | Exam/practice modes, navigation, answers     |
 | `QuestionCard`  | 21    | Single/multi-select, practice mode, feedback |
 | `ResultsModal`  | 11    | Score calculation, pass/fail, interactions   |
+| `Navbar`        | 10    | Navigation links, mobile menu, click handlers|
 | `useNavigation` | 5     | Screen transitions                           |
 | `parseMarkdown` | 4     | Question parsing, edge cases                 |
+| `AboutScreen`   | 3     | Heading, content, semantic structure         |
+| `Footer`        | 2     | Content rendering, semantic structure        |
 
-**Total: 66 tests**
+**Total: 81 tests**
 
 ### Test Commands
 ```bash

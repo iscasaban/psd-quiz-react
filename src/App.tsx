@@ -1,20 +1,14 @@
-import {
-  AppBar,
-  Container,
-  Toolbar,
-  Typography,
-  CircularProgress,
-  Alert,
-  Box,
-  Button,
-} from "@mui/material";
+import { Container, CircularProgress, Alert, Box } from "@mui/material";
 import { useNavigation } from "./hooks/useNavigation";
 import { useQuizState } from "./hooks/useQuizState";
 import { useQuestions } from "./hooks/useQuestions";
 import { LandingScreen } from "./screens/LandingScreen";
 import { RangeSelectionScreen } from "./screens/RangeSelectionScreen";
 import { QuizScreen } from "./screens/QuizScreen";
+import { AboutScreen } from "./screens/AboutScreen";
 import { ResultsModal } from "./components/ResultsModal";
+import { Navbar } from "./components/Navbar";
+import { Footer } from "./components/Footer";
 import type { QuizMode, QuizQuestion } from "./types/quiz";
 
 function App() {
@@ -25,6 +19,7 @@ function App() {
     goToRangeSelection,
     startQuiz,
     showResults,
+    goToAbout,
   } = useNavigation();
   const {
     quizMode,
@@ -69,6 +64,24 @@ function App() {
     goToLanding();
   };
 
+  const handleHomeClick = () => {
+    resetQuiz();
+    goToLanding();
+  };
+
+  const handleExamClick = () => {
+    handleModeSelect("exam");
+  };
+
+  const handlePracticeClick = () => {
+    setMode("practice");
+    goToRangeSelection();
+  };
+
+  const handleAboutClick = () => {
+    goToAbout();
+  };
+
   const handleAnswerChange = (
     _questionId: number,
     selectedAnswers: number[],
@@ -104,58 +117,57 @@ function App() {
   }
 
   return (
-    <>
-      {(currentScreen === "quiz" || currentScreen === "range-selection") && (
-        <AppBar position="sticky">
-          <Container maxWidth="xl">
-            <Toolbar sx={{ justifyContent: "space-between" }}>
-              <Typography variant="h6" color="secondary">
-                PSD I Quiz - {quizMode === "exam" ? "Exam" : "Practice"} Mode
-              </Typography>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+      }}
+    >
+      <Navbar
+        onHomeClick={handleHomeClick}
+        onExamClick={handleExamClick}
+        onPracticeClick={handlePracticeClick}
+        onAboutClick={handleAboutClick}
+      />
 
-              <Button
-                color="inherit"
-                onClick={goToLanding}
-                sx={{ color: "secondary.main" }}
-              >
-                ← Back to Mode Selection
-              </Button>
-            </Toolbar>
-          </Container>
-        </AppBar>
-      )}
+      <Box component="main" sx={{ flex: 1 }}>
+        <Container maxWidth="xl" sx={{ py: 4 }}>
+          {currentScreen === "landing" && (
+            <LandingScreen onModeSelect={handleModeSelect} />
+          )}
 
-      <Container maxWidth="xl" sx={{ py: 4 }}>
-        {currentScreen === "landing" && (
-          <LandingScreen onModeSelect={handleModeSelect} />
-        )}
+          {currentScreen === "range-selection" && (
+            <RangeSelectionScreen onSelectRange={handleRangeSelect} />
+          )}
 
-        {currentScreen === "range-selection" && (
-          <RangeSelectionScreen onSelectRange={handleRangeSelect} />
-        )}
+          {currentScreen === "quiz" && (
+            <QuizScreen
+              currentQuestion={quizQuestions[currentQuestionIndex]}
+              currentIndex={currentQuestionIndex}
+              totalQuestions={quizQuestions.length}
+              quizMode={quizMode}
+              onAnswerChange={handleAnswerChange}
+              onNext={handleNext}
+              onPrevious={previousQuestion}
+              canGoPrevious={canGoPrevious}
+              isLastQuestion={isLastQuestion}
+            />
+          )}
 
-        {currentScreen === "quiz" && (
-          <QuizScreen
-            currentQuestion={quizQuestions[currentQuestionIndex]}
-            currentIndex={currentQuestionIndex}
-            totalQuestions={quizQuestions.length}
-            quizMode={quizMode}
-            onAnswerChange={handleAnswerChange}
-            onNext={handleNext}
-            onPrevious={previousQuestion}
-            canGoPrevious={canGoPrevious}
-            isLastQuestion={isLastQuestion}
+          {currentScreen === "about" && <AboutScreen />}
+
+          <ResultsModal
+            open={currentScreen === "results"}
+            questions={quizQuestions}
+            onClose={() => startQuiz()}
+            onRestart={handleRestart}
           />
-        )}
+        </Container>
+      </Box>
 
-        <ResultsModal
-          open={currentScreen === "results"}
-          questions={quizQuestions}
-          onClose={() => startQuiz()}
-          onRestart={handleRestart}
-        />
-      </Container>
-    </>
+      <Footer />
+    </Box>
   );
 }
 

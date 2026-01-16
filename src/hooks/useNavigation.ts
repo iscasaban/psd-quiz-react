@@ -28,6 +28,11 @@ function navigationReducer(
         currentScreen: "results",
         history: [...state.history, "results"],
       };
+    case "GO_TO_ABOUT":
+      return {
+        currentScreen: "about",
+        history: [...state.history, "about"],
+      };
     default:
       return state;
   }
@@ -42,5 +47,6 @@ export function useNavigation() {
     goToRangeSelection: () => dispatch({ type: "GO_TO_RANGE_SELECTION" }),
     startQuiz: () => dispatch({ type: "START_QUIZ" }),
     showResults: () => dispatch({ type: "SHOW_RESULTS" }),
+    goToAbout: () => dispatch({ type: "GO_TO_ABOUT" }),
   };
 }

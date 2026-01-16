@@ -17,7 +17,7 @@ export function HeroContent({
         display: "flex",
         flexDirection: "column",
         gap: 4,
-        textAlign: { xs: "center", lg: "left" },
+        textAlign: "center",
       }}
     >
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -40,8 +40,7 @@ export function HeroContent({
             fontSize: { xs: "1.1rem", md: "1.25rem" },
             lineHeight: 1.6,
             color: "text.secondary",
-            maxWidth: { lg: "90%" },
-            mx: { xs: "auto", lg: 0 },
+            mx: "auto",
           }}
         >
           Prepare for your PSD I certification with our interactive quiz
