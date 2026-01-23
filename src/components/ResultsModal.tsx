@@ -87,7 +87,7 @@ export function ResultsModal({
           Try Again
         </Button>
         <Button onClick={onClose} variant="outlined">
-          Close
+          Back home
         </Button>
       </DialogActions>
     </Dialog>

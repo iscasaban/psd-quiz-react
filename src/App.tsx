@@ -84,17 +84,20 @@ function App() {
     showResults();
   };
 
-  const handleRestart = () => {
+  const handleTryAgain = () => {
+    clearExamTimer();
+    resetQuiz();
+    initializeExamMode(allQuestions);
+    startQuiz();
+  };
+
+  const handleBackHome = () => {
     clearExamTimer();
     resetQuiz();
     goToLanding();
   };
 
-  const handleHomeClick = () => {
-    clearExamTimer();
-    resetQuiz();
-    goToLanding();
-  };
+  const handleHomeClick = handleBackHome;
 
   const handleExamClick = () => {
     handleModeSelect("exam");
@@ -188,8 +191,8 @@ function App() {
           <ResultsModal
             open={currentScreen === "results"}
             questions={quizQuestions}
-            onClose={() => startQuiz()}
-            onRestart={handleRestart}
+            onClose={handleBackHome}
+            onRestart={handleTryAgain}
           />
         </Container>
       </Box>

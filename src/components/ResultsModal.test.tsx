@@ -206,7 +206,7 @@ describe("ResultsModal", () => {
       expect(mockOnRestart).toHaveBeenCalledTimes(1);
     });
 
-    it("should call onClose when Close button is clicked", () => {
+    it("should call onClose when Back home button is clicked", () => {
       const questions = [createQuestion(0, [0], [0])];
 
       render(
@@ -220,7 +220,7 @@ describe("ResultsModal", () => {
         </TestWrapper>
       );
 
-      fireEvent.click(screen.getByText("Close"));
+      fireEvent.click(screen.getByText("Back home"));
       expect(mockOnClose).toHaveBeenCalledTimes(1);
     });
   });
