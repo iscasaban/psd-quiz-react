@@ -131,7 +131,12 @@ export function AboutScreen() {
           }}
         >
           Have questions, feedback, or just want to say hi?{" "}
-          <Link href="#" underline="hover" color="secondary" fontWeight="bold">
+          <Link
+            href="mailto:iscasabandev.coaster273@passinbox.com"
+            underline="hover"
+            color="secondary"
+            fontWeight="bold"
+          >
             Contact me
           </Link>{" "}
           — I'd love to hear about your certification journey and how this app

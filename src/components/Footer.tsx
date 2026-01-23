@@ -1,4 +1,4 @@
-import { Box, Container, Typography } from "@mui/material";
+import { Box, Container, Link, Typography } from "@mui/material";
 
 export function Footer() {
   return (
@@ -18,7 +18,17 @@ export function Footer() {
             opacity: 0.7,
           }}
         >
-          Made with ☕ & 🎵
+          Made with ☕ & 🎵 by{" "}
+          <Link
+            href="https://github.com/iscasaban/"
+            target="_blank"
+            rel="noopener noreferrer"
+            underline="hover"
+            color="secondary"
+            fontWeight="bold"
+          >
+            Inma Sánchez Casabán
+          </Link>
         </Typography>
       </Container>
     </Box>
