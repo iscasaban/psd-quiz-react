@@ -7,7 +7,8 @@ This is a project created merely for educational purposes, as I was bored studyi
 
 ## Features
 
-- **Exam Mode**: 80 randomly selected questions from the full question bank
+- **Exam Mode**: 80 randomly selected questions from the full question bank with a 60-minute timer and visual warning when time is running low
+- **Session Persistence**: Exam progress is saved to local storage, allowing you to resume if you accidentally close the browser
 - **Practice Mode**: Select specific question ranges for targeted study
 - **Interactive UI**: Material-UI components with responsive design
 - **Persistent Navigation**: Navbar with quick access to all modes from any screen
@@ -22,7 +23,6 @@ This is a project created merely for educational purposes, as I was bored studyi
 - **Build Tool**: Vite for fast development and optimized builds
 - **Testing**: Vitest with React Testing Library
 - **Linting**: ESLint with TypeScript support
-- **Fonts**: Rubik font family
 
 ## Getting Started
 
@@ -66,53 +66,6 @@ npm test -- --coverage # Generate coverage report
 npm test -- <pattern> # Run specific test files
 ```
 
-## Project Structure
-
-```
-src/
-├── components/              # Reusable UI components
-│   ├── Footer.tsx              # App footer
-│   ├── Footer.test.tsx         # Footer tests
-│   ├── HeroContent.tsx         # Landing page hero text
-│   ├── ModeSelector.tsx        # Exam/Practice mode buttons
-│   ├── Navbar.tsx              # Persistent navigation bar
-│   ├── Navbar.test.tsx         # Navbar tests
-│   ├── QuestionCard.tsx        # Question display with answer options
-│   ├── QuestionCard.test.tsx   # QuestionCard tests
-│   ├── QuizNavigation.tsx      # Previous/Next controls
-│   ├── QuizProgress.tsx        # Progress indicator
-│   ├── RangeSelector.tsx       # Question range selection grid
-│   ├── ResultsModal.tsx        # Results summary modal
-│   └── ResultsModal.test.tsx   # ResultsModal tests
-├── screens/                 # Screen-level components
-│   ├── AboutScreen.tsx         # About page
-│   ├── AboutScreen.test.tsx    # AboutScreen tests
-│   ├── LandingScreen.tsx       # Mode selection
-│   ├── QuizScreen.tsx          # Main quiz interface
-│   └── RangeSelectionScreen.tsx # Practice mode range picker
-├── hooks/                   # Custom React hooks
-│   ├── useNavigation.ts        # Screen navigation state
-│   ├── useNavigation.test.ts   # Navigation hook tests
-│   ├── useQuestions.ts         # Context hook for questions
-│   ├── useQuizState.ts         # Quiz state management
-│   └── useQuizState.test.ts    # Quiz state tests
-├── context/                 # React Context providers
-│   └── QuestionContext.tsx     # Question data provider
-├── utils/                   # Utility functions
-│   ├── parseMarkdown.ts        # Question parsing logic
-│   └── parseMarkdown.test.ts   # Parser tests
-├── data/                    # Static data
-│   └── answers.md              # Question bank (305 questions)
-├── theme/                   # MUI theme configuration
-│   └── theme.ts                # Custom theme settings
-├── types/                   # TypeScript type definitions
-│   ├── navigation.ts           # Navigation types
-│   └── quiz.ts                 # Quiz-related types
-├── test/                    # Test configuration
-│   └── setup.ts                # Vitest setup with jest-dom
-└── App.tsx                  # Main application component
-```
-
 ## Question Format
 
 Questions are stored in Markdown format (`src/data/answers.md`):
@@ -131,37 +84,10 @@ Questions are stored in Markdown format (`src/data/answers.md`):
 - Correct answers marked with `[x]`
 - Incorrect answers marked with `[ ]`
 
-## Development Guidelines
-
-### Code Style
-- Use functional components with hooks (no class components)
-- Prefer named exports over default exports
-- Keep components under 200 lines; extract logic to custom hooks
-- File naming: PascalCase for components, camelCase for utilities
-
-### Testing Patterns
-- **Components**: Use React Testing Library with MUI TestWrapper
-- **Hooks**: Use `renderHook` and `act` from React Testing Library
-- **Utilities**: Focus on edge cases and data transformation
-- **Mocking**: Use `vi.fn()` for function mocks, mock browser APIs in setup
-
-### State Management
-
-The application uses custom hooks for state management:
-
-| Hook            | Purpose                                                                    |
-|-----------------|----------------------------------------------------------------------------|
-| `useNavigation` | Screen transitions (landing, range-selection, quiz, results, about)        |
-| `useQuizState`  | Quiz logic: questions, current index, answers, mode                        |
-| `useQuestions`  | Access to parsed questions from context                                    |
-
-- **QuestionContext**: Loads and parses questions from markdown at app startup
-- **Local State**: Component-specific state using standard React hooks
-
 ## Architecture
 
 ### Quiz Modes
-- **Exam Mode**: 80 randomly shuffled questions, immediate start
+- **Exam Mode**: 80 randomly shuffled questions with 60-minute timer; session persisted to local storage for recovery
 - **Practice Mode**: User-selected question ranges, optional answer checking
 
 ### Navigation Flow
@@ -194,25 +120,14 @@ The app features a persistent navbar visible on all screens with links to Home, 
 ### State Flow
 1. Questions loaded from markdown and parsed via context
 2. Mode selection initializes appropriate question set
+   - In Exam mode, checks for existing session in local storage to allow recovery
 3. Quiz state tracks current question, user answers, and progress
-4. Results calculated and displayed upon completion
+   - Exam mode persists state to local storage on each interaction
+4. Results calculated and displayed upon completion or timer expiration
 
 ## Testing
 
-The project uses Vitest with React Testing Library. Current test coverage:
-
-| Module          | Tests | Coverage                                     |
-|-----------------|-------|----------------------------------------------|
-| `useQuizState`  | 25    | Exam/practice modes, navigation, answers     |
-| `QuestionCard`  | 21    | Single/multi-select, practice mode, feedback |
-| `ResultsModal`  | 11    | Score calculation, pass/fail, interactions   |
-| `Navbar`        | 10    | Navigation links, mobile menu, click handlers|
-| `useNavigation` | 5     | Screen transitions                           |
-| `parseMarkdown` | 4     | Question parsing, edge cases                 |
-| `AboutScreen`   | 3     | Heading, content, semantic structure         |
-| `Footer`        | 2     | Content rendering, semantic structure        |
-
-**Total: 81 tests**
+The project uses Vitest with React Testing Library.
 
 ### Test Commands
 ```bash
