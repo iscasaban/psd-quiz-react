@@ -1,6 +1,5 @@
 import { Box, Container } from "@mui/material";
 import { HeroContent } from "../components/HeroContent";
-import { useQuestions } from "../hooks/useQuestions";
 import type { QuizMode } from "../types/quiz";
 
 interface LandingScreenProps {
@@ -8,8 +7,6 @@ interface LandingScreenProps {
 }
 
 export function LandingScreen({ onModeSelect }: LandingScreenProps) {
-  const { allQuestions } = useQuestions();
-
   return (
     <Box
       component="section"
@@ -22,10 +19,7 @@ export function LandingScreen({ onModeSelect }: LandingScreenProps) {
       }}
     >
       <Container maxWidth="md">
-        <HeroContent
-          totalQuestions={allQuestions.length}
-          onSelectMode={onModeSelect}
-        />
+        <HeroContent onSelectMode={onModeSelect} />
       </Container>
     </Box>
   );

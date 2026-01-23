@@ -3,14 +3,10 @@ import { ModeSelector } from "./ModeSelector";
 import type { QuizMode } from "../types/quiz";
 
 interface HeroContentProps {
-  totalQuestions: number;
   onSelectMode: (mode: QuizMode) => void;
 }
 
-export function HeroContent({
-  totalQuestions,
-  onSelectMode,
-}: HeroContentProps) {
+export function HeroContent({ onSelectMode }: HeroContentProps) {
   return (
     <Box
       sx={{
@@ -31,7 +27,7 @@ export function HeroContent({
             color: "secondary.main",
           }}
         >
-          Professional Scrum Developer™ Certification
+          Master the Professional Scrum Developer™ I Certification
         </Typography>
 
         <Typography
@@ -43,20 +39,19 @@ export function HeroContent({
             mx: "auto",
           }}
         >
-          Prepare for your PSD I certification with our interactive quiz
-          platform. Currently featuring{" "}
-          <strong>{totalQuestions} questions</strong>. Choose your preferred
-          learning style and start improving your skills today.
+          Pass your PSD I exam with confidence using our comprehensive quiz
+          platform featuring 305 real-world practice questions. Choose your
+          learning path and start your Scrum Developer journey today.
         </Typography>
 
         <Box sx={{ mt: 1 }}>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-            • <strong>Practice Mode:</strong> Choose specific question ranges
-            and get immediate feedback
+            🎯 Practice Mode: Select custom question ranges and receive instant
+            feedback to reinforce your learning
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            • <strong>Exam Mode:</strong> Test yourself with 80 randomly
-            selected questions
+            🚀 Exam Mode: Simulate the real test with 80 randomly selected
+            questions under exam conditions
           </Typography>
         </Box>
       </Box>
