@@ -26,3 +26,4 @@ dist-ssr
 # Claude code config
 CLAUDE.md
 .claude/agents
+.mcp.json
