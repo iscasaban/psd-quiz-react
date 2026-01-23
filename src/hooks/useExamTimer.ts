@@ -63,9 +63,11 @@ export function useExamTimer({
     const intervalId = setInterval(() => {
       setTimeRemaining((prev) => {
         const newTime = prev - 1;
-        if (newTime <= 0 && !hasExpiredRef.current) {
-          hasExpiredRef.current = true;
-          onTimeExpired();
+        if (newTime <= 0) {
+          if (!hasExpiredRef.current) {
+            hasExpiredRef.current = true;
+            onTimeExpired();
+          }
           return 0;
         }
         return newTime;
