@@ -1,7 +1,9 @@
+import { useEffect, useState } from "react";
 import { Container, CircularProgress, Alert, Box } from "@mui/material";
 import { useNavigation } from "./hooks/useNavigation";
 import { useQuizState } from "./hooks/useQuizState";
 import { useQuestions } from "./hooks/useQuestions";
+import { clearExamTimer } from "./hooks/useExamTimer";
 import { LandingScreen } from "./screens/LandingScreen";
 import { RangeSelectionScreen } from "./screens/RangeSelectionScreen";
 import { QuizScreen } from "./screens/QuizScreen";
@@ -32,9 +34,26 @@ function App() {
     previousQuestion,
     updateQuestionAnswers,
     resetQuiz,
+    restoreExamSession,
+    checkForActiveExamSession,
     isLastQuestion,
     canGoPrevious,
   } = useQuizState();
+
+  const [hasCheckedSession, setHasCheckedSession] = useState(false);
+
+  // Restore active exam session on page load
+  useEffect(() => {
+    if (!loading && !hasCheckedSession) {
+      setHasCheckedSession(true);
+      if (checkForActiveExamSession()) {
+        const restored = restoreExamSession();
+        if (restored) {
+          startQuiz();
+        }
+      }
+    }
+  }, [loading, hasCheckedSession, checkForActiveExamSession, restoreExamSession, startQuiz]);
 
   const handleModeSelect = (mode: QuizMode) => {
     setMode(mode);
@@ -53,18 +72,26 @@ function App() {
 
   const handleNext = () => {
     if (isLastQuestion) {
+      clearExamTimer();
       showResults();
     } else {
       nextQuestion();
     }
   };
 
+  const handleTimeExpired = () => {
+    clearExamTimer();
+    showResults();
+  };
+
   const handleRestart = () => {
+    clearExamTimer();
     resetQuiz();
     goToLanding();
   };
 
   const handleHomeClick = () => {
+    clearExamTimer();
     resetQuiz();
     goToLanding();
   };
@@ -152,6 +179,7 @@ function App() {
               onPrevious={previousQuestion}
               canGoPrevious={canGoPrevious}
               isLastQuestion={isLastQuestion}
+              onTimeExpired={handleTimeExpired}
             />
           )}
 

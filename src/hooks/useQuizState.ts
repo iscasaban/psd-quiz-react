@@ -1,6 +1,14 @@
 // hooks/useQuizState.ts
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import type { QuizMode, QuizQuestion } from "../types/quiz";
+import {
+  saveExamSession,
+  loadExamSession,
+  updateExamQuestions,
+  updateExamCurrentIndex,
+  clearExamSession,
+  hasActiveExamSession,
+} from "../utils/examSessionStorage";
 
 const EXAM_QUESTION_COUNT = 80;
 
@@ -21,14 +29,22 @@ export function useQuizState() {
     setQuizMode(mode);
   };
 
-  const initializeExamMode = (allQuestions: QuizQuestion[]) => {
+  const initializeExamMode = useCallback((allQuestions: QuizQuestion[]) => {
     const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
     const selected = shuffled.slice(0, EXAM_QUESTION_COUNT);
     const prepared = prepareQuestions(selected);
 
+    const startTime = Date.now();
+    saveExamSession({
+      startTime,
+      questions: prepared,
+      currentIndex: 0,
+    });
+
     setQuizQuestions(prepared);
     setCurrentQuestionIndex(0);
-  };
+    setQuizMode("exam");
+  }, []);
 
   const initializePracticeMode = (selectedQuestions: QuizQuestion[]) => {
     const prepared = prepareQuestions(selectedQuestions);
@@ -37,31 +53,63 @@ export function useQuizState() {
     setCurrentQuestionIndex(0);
   };
 
-  const nextQuestion = () => {
-    setCurrentQuestionIndex((prev) => prev + 1);
-  };
+  const nextQuestion = useCallback(() => {
+    setCurrentQuestionIndex((prev) => {
+      const newIndex = prev + 1;
+      if (quizMode === "exam") {
+        updateExamCurrentIndex(newIndex);
+      }
+      return newIndex;
+    });
+  }, [quizMode]);
 
-  const previousQuestion = () => {
+  const previousQuestion = useCallback(() => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex((prev) => prev - 1);
+      setCurrentQuestionIndex((prev) => {
+        const newIndex = prev - 1;
+        if (quizMode === "exam") {
+          updateExamCurrentIndex(newIndex);
+        }
+        return newIndex;
+      });
     }
-  };
+  }, [currentQuestionIndex, quizMode]);
 
-  const updateQuestionAnswers = (selectedAnswers: number[]) => {
+  const updateQuestionAnswers = useCallback((selectedAnswers: number[]) => {
     setCurrentQuestionIndex((currentIndex) => {
-      setQuizQuestions((prev) =>
-        prev.map((q, index) =>
+      setQuizQuestions((prev) => {
+        const updated = prev.map((q, index) =>
           index === currentIndex ? { ...q, selectedAnswers } : q,
-        ),
-      );
+        );
+        if (quizMode === "exam") {
+          updateExamQuestions(updated);
+        }
+        return updated;
+      });
       return currentIndex; // Don't change the index
     });
-  };
+  }, [quizMode]);
 
-  const resetQuiz = () => {
+  const resetQuiz = useCallback(() => {
+    clearExamSession();
     setCurrentQuestionIndex(0);
     setQuizQuestions([]);
-  };
+  }, []);
+
+  const restoreExamSession = useCallback(() => {
+    const session = loadExamSession();
+    if (session) {
+      setQuizMode("exam");
+      setQuizQuestions(session.questions);
+      setCurrentQuestionIndex(session.currentIndex);
+      return true;
+    }
+    return false;
+  }, []);
+
+  const checkForActiveExamSession = useCallback(() => {
+    return hasActiveExamSession();
+  }, []);
 
   return {
     quizMode,
@@ -74,6 +122,8 @@ export function useQuizState() {
     previousQuestion,
     updateQuestionAnswers,
     resetQuiz,
+    restoreExamSession,
+    checkForActiveExamSession,
     isLastQuestion: currentQuestionIndex === quizQuestions.length - 1,
     canGoPrevious: currentQuestionIndex > 0,
   };
