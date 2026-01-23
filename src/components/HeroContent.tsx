@@ -24,7 +24,7 @@ export function HeroContent({ onSelectMode }: HeroContentProps) {
             fontSize: { xs: "1.8rem", sm: "2.5rem", lg: "3rem" },
             fontWeight: 700,
             lineHeight: 1.2,
-            color: "secondary.main",
+            color: "primary.dark",
           }}
         >
           Master the Professional Scrum Developer™ I Certification

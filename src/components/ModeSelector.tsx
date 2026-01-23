@@ -14,7 +14,7 @@ export function ModeSelector({ onSelectMode }: ModeSelectorProps) {
         display: "flex",
         flexDirection: { xs: "column", sm: "row" },
         gap: 2,
-        justifyContent: { xs: "center", lg: "flex-start" },
+        justifyContent: { xs: "center", lg: "center" },
       }}
     >
       <Button
