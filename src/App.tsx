@@ -53,7 +53,13 @@ function App() {
         }
       }
     }
-  }, [loading, hasCheckedSession, checkForActiveExamSession, restoreExamSession, startQuiz]);
+  }, [
+    loading,
+    hasCheckedSession,
+    checkForActiveExamSession,
+    restoreExamSession,
+    startQuiz,
+  ]);
 
   const handleModeSelect = (mode: QuizMode) => {
     setMode(mode);
@@ -131,7 +137,12 @@ function App() {
           height: "100vh",
         }}
       >
-        <CircularProgress />
+        <CircularProgress
+          sx={{
+            transform: "translateZ(0)",
+            willChange: "transform",
+          }}
+        />
       </Box>
     );
   }

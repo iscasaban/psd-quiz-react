@@ -42,7 +42,8 @@ export const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: "Nunito, system-ui, Avenir, Helvetica, Arial, sans-serif",
+    fontFamily:
+      '"Nunito", system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
     fontSize: 14,
     fontWeightLight: 500,
     fontWeightRegular: 700,

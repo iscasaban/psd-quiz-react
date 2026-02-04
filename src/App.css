@@ -6,12 +6,18 @@
 }
 
 body {
-  min-height: 100vh;
+    font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
   display: flex;
   align-items: start;
   justify-content: start;
   padding: 0;
   margin: 0;
+}
+
+@font-face {
+    font-family: 'Nunito';
+    font-display: swap;
 }
 
 main {
